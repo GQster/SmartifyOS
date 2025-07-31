@@ -5,6 +5,7 @@ using SmartifyOS.UI.Components;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using System.Collections.Generic; 
 
 namespace SmartifyOS.UI.MediaPlayer
 {
@@ -361,7 +362,7 @@ namespace SmartifyOS.UI.MediaPlayer
             }
 
             // Only show a limited number of items around the current index
-            int startIdx = playlistScrollOffset
+            int startIdx = playlistScrollOffset;
             int endIdx = Mathf.Min(playlist.audioFilePaths.Count, startIdx + MaxVisibleItems);
 
             for (int i = startIdx; i < endIdx; i++)
@@ -370,12 +371,17 @@ namespace SmartifyOS.UI.MediaPlayer
                 var text = item.GetComponentInChildren<TMP_Text>();
                 text.text = Path.GetFileName(playlist.audioFilePaths[i]);
                 int idx = i;
-                item.GetComponent<Button>().onClick.AddListener(() =>
+
+                var iconButton = item.GetComponent<IconButton>();
+                if (iconButton != null)
                 {
-                    playlistIndex = idx;
-                    SelectAndPlay(playlist.audioFilePaths[idx]);
-                    RefreshPlaylistUI();
-                });
+                    iconButton.onClick += () =>
+                            {
+                                playlistIndex = idx;
+                                SelectAndPlay(playlist.audioFilePaths[idx]);
+                                RefreshPlaylistUI();
+                    };
+                }
 
                 // Visual feedback: highlight currently playing item
                 var bg = item.GetComponent<UnityEngine.UI.Image>();
